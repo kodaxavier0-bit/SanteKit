@@ -1,0 +1,140 @@
+{
+  "info": {
+    "name": "SantéKit - API Tests",
+    "description": "Collection Postman pour tester l'API Flask SantéKit (GET /health, POST /predict).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Vérifier santé de l'API",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Vérifie que l'API Flask est en ligne et répond."
+      }
+    },
+    {
+      "name": "Prédiction - Niveau faible",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"age\": 34,\n  \"fievre\": true,\n  \"temperature\": 38.6,\n  \"toux\": true,\n  \"duree_jours\": 1,\n  \"difficulte_respiratoire\": false,\n  \"douleur_poitrine\": false,\n  \"vomissements_diarrhee\": false,\n  \"maux_tete_intenses\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": ["{{base_url}}"],
+          "path": ["predict"]
+        },
+        "description": "Adulte, fièvre légère, 1 jour → niveau attendu : faible (vert)."
+      }
+    },
+    {
+      "name": "Prédiction - Niveau moyen",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"age\": 7,\n  \"fievre\": true,\n  \"temperature\": 39.2,\n  \"toux\": true,\n  \"duree_jours\": 3,\n  \"difficulte_respiratoire\": false,\n  \"douleur_poitrine\": false,\n  \"vomissements_diarrhee\": false,\n  \"maux_tete_intenses\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": ["{{base_url}}"],
+          "path": ["predict"]
+        },
+        "description": "Enfant, forte fièvre, toux, 3 jours → niveau attendu : moyen (orange)."
+      }
+    },
+    {
+      "name": "Prédiction - Niveau élevé",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"age\": 45,\n  \"fievre\": true,\n  \"temperature\": 38.0,\n  \"toux\": false,\n  \"duree_jours\": 2,\n  \"difficulte_respiratoire\": true,\n  \"douleur_poitrine\": true,\n  \"vomissements_diarrhee\": false,\n  \"maux_tete_intenses\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": ["{{base_url}}"],
+          "path": ["predict"]
+        },
+        "description": "Difficulté respiratoire + douleur poitrine → niveau attendu : élevé (rouge)."
+      }
+    },
+    {
+      "name": "Erreur 400 - Âge négatif",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"age\": -5,\n  \"fievre\": true,\n  \"temperature\": 39.0,\n  \"toux\": false,\n  \"duree_jours\": 2,\n  \"difficulte_respiratoire\": false,\n  \"douleur_poitrine\": false,\n  \"vomissements_diarrhee\": false,\n  \"maux_tete_intenses\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": ["{{base_url}}"],
+          "path": ["predict"]
+        },
+        "description": "Âge négatif → erreur 400 avec message explicite."
+      }
+    },
+    {
+      "name": "Erreur 400 - Champ manquant",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fievre\": true,\n  \"temperature\": 38.6\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": ["{{base_url}}"],
+          "path": ["predict"]
+        },
+        "description": "Champs obligatoires manquants → erreur 400."
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string",
+      "description": "URL de base de l'API Flask. Remplacer par l'URL Render ou PythonAnywhere pour les tests à distance."
+    }
+  ]
+}
